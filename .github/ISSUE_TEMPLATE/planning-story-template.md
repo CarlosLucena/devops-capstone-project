@@ -1,5 +1,5 @@
 ---
-name: ISSUE_TEMPLATES
+name: planning-story-template
 about: Story Card
 title: ''
 labels: ''
