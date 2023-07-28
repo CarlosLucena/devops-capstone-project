@@ -67,9 +67,21 @@ def create_accounts():
 ######################################################################
 # READ AN ACCOUNT
 ######################################################################
-
-# ... place you code here to READ an account ...
-
+@app.route("/accounts/{id}", methods=["GET"])
+def read_accounts():
+    """
+    Read Account
+    This endpoint will return an account by id 
+    """
+    app.logger.info("Request to read account")
+    check_content_type("application/json")
+    account = Account()
+    account.find(id)
+    message = account.serialize()
+    location_url = "/"  # Remove once get_accounts has been implemented
+    return make_response(
+        jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
+    )
 
 ######################################################################
 # UPDATE AN EXISTING ACCOUNT
