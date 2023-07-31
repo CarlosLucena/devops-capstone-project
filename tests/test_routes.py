@@ -126,24 +126,32 @@ class TestAccountService(TestCase):
 
     # ADD YOUR TEST CASES HERE ...
     # 
-    def test_get_account(self): 
+    def test_read_account(self): 
         """It should read an Account"""
-        account = AccountFactory()
-        response = self.client.post(
-            BASE_URL,
-            json=account.serialize(),
-            content_type="application/json"
-        )
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # account = AccountFactory()
+        # response = self.client.post(
+        #     BASE_URL,
+        #     json=account.serialize(),
+        #     content_type="application/json"
+        # )
+        # self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        url = (BASE_URL + "/" + str(account.id))
-        response = self.client.get(
-            url,
-            content_type="application/json"
+        # url = (BASE_URL + "/" + str(account.id))
+        # response = self.client.get(
+        #     url,
+        #     content_type="application/json"
+        # )
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # data = response.get_json()
+        # self.assertEqual(data["id"], account.id)
+        # self.assertEqual(data["name"], account.name)
+
+        account = self._create_accounts(1)[0]
+        resp = self.client.get(
+            f"{BASE_URL}/{account.id}", content_type="application/json"
         )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.get_json()
-        self.assertEqual(data["id"], account.id)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
         self.assertEqual(data["name"], account.name)
 
     # 
