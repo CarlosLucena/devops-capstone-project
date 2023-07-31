@@ -102,6 +102,7 @@ class TestAccountService(TestCase):
 
         # Check the data is correct
         new_account = response.get_json()
+        self.assertIsNotNone(new_account["id"], account.id)
         self.assertEqual(new_account["name"], account.name)
         self.assertEqual(new_account["email"], account.email)
         self.assertEqual(new_account["address"], account.address)
@@ -124,8 +125,9 @@ class TestAccountService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
     # ADD YOUR TEST CASES HERE ...
-    def test_read_an_account(self): 
-        """It should Create a new Account"""
+    # 
+    def test_get_account(self): 
+        """It should read an Account"""
         account = AccountFactory()
         response = self.client.post(
             BASE_URL,
@@ -134,8 +136,57 @@ class TestAccountService(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        self.client.post(account)
+        url = (BASE_URL + "/" + str(account.id))
         response = self.client.get(
-            (BASE_URL + "/" + str(account.id))
-        ) 
+            url,
+            content_type="application/json"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(data["id"], account.id)
+        self.assertEqual(data["name"], account.name)
+
+    # 
+    def test_list_accounts(self): 
+        """It should get a list of all Account"""
+        account = AccountFactory()
+        response = self.client.get(
+            BASE_URL,
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.get_json()
+        account_list = data['accounts']
+        self.assertGreater(len(account_list), 0)
+
+    # 
+    def test_update_account(self): 
+        """It should update an Account"""
+        account = AccountFactory()
+        response = self.client.post(
+            BASE_URL,
+            json=account.serialize(),
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        account_id = account.id
+        account.name = "Carlos"
+        account.email = "new@email.com"
+        account.address = "new address"
+        account.phone_number = "999 999 9999"
+
+        url = (BASE_URL + "/" + str(account.id))
+        response = self.client.post(
+            url,
+            json=account.serialize(),
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(data["id"], account_id)
+        self.assertEqual(data["name"], "Carlos")
+        self.assertEqual(data["email"], "new@email.com")
+        self.assertEqual(data["address"], "new address")
+        self.assertEqual(data["999 999 9999"], "999 999 9999" )
