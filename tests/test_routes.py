@@ -190,3 +190,30 @@ class TestAccountService(TestCase):
         self.assertEqual(data["email"], "new@email.com")
         self.assertEqual(data["address"], "new address")
         self.assertEqual(data["999 999 9999"], "999 999 9999" )
+
+    # 
+    def test_delete_account(self): 
+        """It should delete an Account"""
+        account = AccountFactory()
+        response = self.client.post(
+            BASE_URL,
+            json=account.serialize(),
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        url = (BASE_URL + "/" + str(account.id))
+        response = self.client.delete(
+            url,
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertIsNone(response.get_data())
+        
+        url = (BASE_URL + "/" + str(account.id))
+        response = self.client.get(
+            url,
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+

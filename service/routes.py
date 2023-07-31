@@ -68,7 +68,7 @@ def create_accounts():
 # READ AN ACCOUNT
 ######################################################################
 @app.route("/accounts/{id}", methods=["GET"])
-def read_accounts():
+def get_accounts():
     """
     Read Account
     This endpoint will return an account by id 
