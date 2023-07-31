@@ -122,11 +122,12 @@ class TestAccountService(TestCase):
             json=account.serialize(),
             content_type="test/html"
         )
-        self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+        self.assertEqual(response.status_code,
+                         status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
     # ADD YOUR TEST CASES HERE ...
-    # 
-    def test_read_account(self): 
+    #
+    def test_read_account(self):
         """It should read an Account"""
         # account = AccountFactory()
         # response = self.client.post(
@@ -153,16 +154,17 @@ class TestAccountService(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
         self.assertEqual(data["name"], account.name)
-    
+
     #
     def test_get_account_not_found(self):
         """It should not Read an Account that is not found"""
         resp = self.client.get(f"{BASE_URL}/0")
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
-    
-    # 
-    def test_list_accounts(self): 
+
+    #
+    def test_list_accounts(self):
         """It should get a list of all Account"""
+        self._create_accounts(5)
         account = AccountFactory()
         response = self.client.get(
             BASE_URL,
@@ -171,17 +173,10 @@ class TestAccountService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = response.get_json()
-        account_list = data['accounts']
-        self.assertGreater(len(account_list), 0)
-        
-        #solution for lab
-        self._create_accounts(5)
-        resp = self.client.get(BASE_URL)
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        data = resp.get_json()
-        self.assertEqual(len(data), 5)
-    # 
-    def test_update_account(self): 
+        self.assertEquals(len(data), 5)
+
+    #
+    def test_update_account(self):
         """It should update an Account"""
         account = AccountFactory()
         response = self.client.post(
@@ -190,29 +185,30 @@ class TestAccountService(TestCase):
             content_type="application/json"
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        data = response.get_json()
 
-        account_id = account.id
+        account_id = data["id"]
         account.name = "Carlos"
         account.email = "new@email.com"
         account.address = "new address"
         account.phone_number = "999 999 9999"
 
         url = (BASE_URL + "/" + str(account.id))
-        response = self.client.post(
+        response = self.client.put(
             url,
             json=account.serialize(),
             content_type="application/json"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.get_json()
+
         self.assertEqual(data["id"], account_id)
         self.assertEqual(data["name"], "Carlos")
         self.assertEqual(data["email"], "new@email.com")
         self.assertEqual(data["address"], "new address")
-        self.assertEqual(data["999 999 9999"], "999 999 9999" )
+        self.assertEqual(data["999 999 9999"], "999 999 9999")
 
-    # 
-    def test_delete_account(self): 
+    #
+    def test_delete_account(self):
         """It should delete an Account"""
         account = AccountFactory()
         response = self.client.post(
@@ -221,17 +217,18 @@ class TestAccountService(TestCase):
             content_type="application/json"
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        data = response.get_json()
 
-        url = (BASE_URL + "/" + str(account.id))
-        response = self.client.delete(
+        account_id = str(data["id"])
+        url = (BASE_URL + "/" + account_id)
+        response=self.client.delete(
             url,
             content_type="application/json"
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertIsNone(response.get_data())
-        
-        url = (BASE_URL + "/" + str(account.id))
-        response = self.client.get(
+        self.assertEqual(len(response.get_data()), 0)
+
+        response=self.client.get(
             url,
             content_type="application/json"
         )
