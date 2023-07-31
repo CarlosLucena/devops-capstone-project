@@ -187,7 +187,7 @@ class TestAccountService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         data = response.get_json()
 
-        account_id = data["id"]
+        account.id = data["id"]
         account.name = "Carlos"
         account.email = "new@email.com"
         account.address = "new address"
@@ -201,11 +201,12 @@ class TestAccountService(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(data["id"], account_id)
+        data = response.get_json()
+        self.assertEqual(data["id"], account.id)
         self.assertEqual(data["name"], "Carlos")
         self.assertEqual(data["email"], "new@email.com")
         self.assertEqual(data["address"], "new address")
-        self.assertEqual(data["999 999 9999"], "999 999 9999")
+        self.assertEqual(data["phone_number"], "999 999 9999")
 
     #
     def test_delete_account(self):
