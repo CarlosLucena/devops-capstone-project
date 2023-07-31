@@ -176,6 +176,15 @@ class TestAccountService(TestCase):
         self.assertEquals(len(data), 5)
 
     #
+    def test_update_non_existance_account(self):
+        """Update should raise an exception for non-existance account"""
+        account = AccountFactory()
+
+        url = (BASE_URL + "/" + str(account.id))
+        response = self.client.put(url, json=account.serialize(), content_type="application/json")
+        self.assertEquals(status.HTTP_404_NOT_FOUND, response.status_code) 
+
+    #
     def test_update_account(self):
         """It should update an Account"""
         account = AccountFactory()
