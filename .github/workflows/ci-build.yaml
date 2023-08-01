@@ -13,7 +13,7 @@ jobs:
     services:
       postgres: 
         image: postgres:alpine
-        port: 
+        ports: 
           - 5432:5432
         env: 
           POSTGRES_PASSWORD: pgs3cr3t
@@ -23,9 +23,12 @@ jobs:
           --health-interva 10s
           --health-timeout 5s
           --health-retries 5
-
-          run: docker run -d --name postgres -p 5432:5432 \
-              -e POSTGRES_PASSWORD=pgs3cr3t \
-              -v postgres:/var/lib/postgresql/data \
-              postgres:alpine
       
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: | 
+          python -m pip install --upgrade pip wheel
+          run: pip install -r requirements.txt
