@@ -20,7 +20,7 @@ jobs:
           POSTGRES_DB: testdb
         options: >-
           --health-cmd pg_isready
-          --health-interva 10s
+          --health-interval 10s
           --health-timeout 5s
           --health-retries 5
       
@@ -39,7 +39,6 @@ jobs:
           flake8 service --count --max-complexity=10 --max-line-length=127 --statistics
           #make lint
       - name: Run test
-        run: | 
-          nosetests -v --with-spec --spec-color --with-coverage --cover-package=service
+        run: nosetests 
         env:
           DATABASE_URI: "postgresql://postgres:pgs3cr3t@postgres:5432/testdb"
