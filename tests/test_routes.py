@@ -25,6 +25,7 @@ HTTPS_ENVIRON = {'wsgi.url_scheme': 'https'}
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
+
 class TestAccountService(TestCase):
     """Account Service Tests"""
 
@@ -59,6 +60,7 @@ class TestAccountService(TestCase):
 
     def _create_accounts(self, count):
         """Factory method to create accounts in bulk"""
+
         accounts = []
         for _ in range(count):
             account = AccountFactory()
@@ -72,7 +74,6 @@ class TestAccountService(TestCase):
             account.id = new_account["id"]
             accounts.append(account)
         return accounts
-
 
     ######################################################################
     #  A C C O U N T   T E S T   C A S E S
@@ -168,8 +169,8 @@ class TestAccountService(TestCase):
     #
     def test_list_accounts(self):
         """It should get a list of all Account"""
+        
         self._create_accounts(5)
-        account = AccountFactory()
         response = self.client.get(
             BASE_URL,
             content_type="application/json"
@@ -184,10 +185,9 @@ class TestAccountService(TestCase):
         """Update should raise an exception for non-existance account"""
         account = AccountFactory()
 
-        url = (BASE_URL + "/" + str(account.id))
-        response = self.client.put(url, json=account.serialize(), content_type="application/json")
-        self.assertEquals(status.HTTP_404_NOT_FOUND, response.status_code) 
-
+        url = BASE_URL + "/" + str(account.id)
+        response = self.client.put(url, json = account.serialize(), content_type = "application/json")
+        self.assertEquals(status.HTTP_404_NOT_FOUND, response.status_code)
     #
     def test_update_account(self):
         """It should update an Account"""
@@ -234,18 +234,12 @@ class TestAccountService(TestCase):
         data = response.get_json()
 
         account_id = str(data["id"])
-        url = (BASE_URL + "/" + account_id)
-        response=self.client.delete(
-            url,
-            content_type="application/json"
-        )
+        url = BASE_URL + "/" + account_id
+        response = self.client.delete(url, content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(response.get_data()), 0)
 
-        response=self.client.get(
-            url,
-            content_type="application/json"
-        )
+        response=self.client.get(url, content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 # def test_method_not_allowed(self):
