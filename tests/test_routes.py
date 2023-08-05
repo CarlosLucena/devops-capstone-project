@@ -189,7 +189,7 @@ class TestAccountService(TestCase):
         url = BASE_URL + "/" + str(account.id)
         response = self.client.put(url, json=account.serialize(), content_type="application/json")
         self.assertEquals(status.HTTP_404_NOT_FOUND, response.status_code)
-    
+
     #
     def test_update_account(self):
         """It should update an Account"""
@@ -241,7 +241,7 @@ class TestAccountService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(response.get_data()), 0)
 
-        response=self.client.get(url, content_type = "application/json")
+        response = self.client.get(url, content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 # def test_method_not_allowed(self):
